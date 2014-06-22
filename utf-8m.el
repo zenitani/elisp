@@ -1,13 +1,12 @@
 ;;; -*- coding: iso-2022-7bit -*-
 ;;; utf-8m.el --- modified UTF-8 encoding for Mac OS X hfs plus volume format
 
-;; Copyright (C) 2004-2008, 2012  Seiji Zenitani
+;; Copyright (C) 2004-2008, 2012, 2014  Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@mac.com>
-;; $Id: utf-8m.el 756 2012-06-13 14:11:21Z zenitani $
 ;; Keywords: mac, multilingual, Unicode, UTF-8
 ;; Created: 2004-02-20
-;; Compatibility: Emacs 22
+;; Compatibility: Emacs 22 only
 ;; URL(jp): http://th.nao.ac.jp/MEMBER/zenitani/emacs-j.html
 ;; URL(en): http://th.nao.ac.jp/MEMBER/zenitani/emacs-e.html
 

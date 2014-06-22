@@ -1,14 +1,12 @@
 ;;; a-menu.el --- create a menu from a specified directory
 
-;; Copyright (C) 2001-2008  by Seiji Zenitani
+;; Copyright (C) 2001-2008, 2014  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@mac.com>
-;; $Id: a-menu.el 379 2008-04-24 02:14:12Z zenitani $
 ;; Keywords: tools, unix
 ;; Created: 2001-08-01
-;; Compatibility: Emacs 21, 22
-;; URL(en): http://homepage.mac.com/zenitani/comp-e.html
-;; URL(jp): http://homepage.mac.com/zenitani/elisp-j.html#a-menu
+;; Compatibility: Emacs 21 or later
+;; URL: https://github.com/zenitani/elisp/blob/master/a-menu.el
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

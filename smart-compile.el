@@ -1,13 +1,12 @@
 ;;; smart-compile.el --- an interface to `compile'
 
-;; Copyright (C) 1998-2012  by Seiji Zenitani
+;; Copyright (C) 1998-2014  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@mac.com>
-;; $Id: smart-compile.el 764 2012-07-10 15:58:08Z zenitani $
 ;; Keywords: tools, unix
 ;; Created: 1998-12-27
 ;; Compatibility: Emacs 21 or later
-;; URL(en): http://www.emacswiki.org/emacs/smart-compile.el
+;; URL(en): https://github.com/zenitani/elisp/blob/master/smart-compile.el
 ;; URL(jp): http://th.nao.ac.jp/MEMBER/zenitani/elisp-j.html#smart-compile
 
 ;; Contributors: Sakito Hisakura, Greg Pfell
