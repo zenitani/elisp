@@ -104,7 +104,8 @@ evaluate FUNCTION instead of running a compilation command.
   ("%e" . (or (file-name-extension (buffer-file-name)) ""))
   ("%o" . smart-compile-option-string)
 ;;   ("%U" . (user-login-name))
-  ))
+  )
+  "Alist of %-sequences for format control strings in `smart-compile-alist'.")
 (put 'smart-compile-replace-alist 'risky-local-variable t)
 
 (defvar smart-compile-check-makefile t)
