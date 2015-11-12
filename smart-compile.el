@@ -3,7 +3,7 @@
 ;; Copyright (C) 1998-2015  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@mac.com>
-;; Version: 20150520
+;; Version: 20151112
 ;; Keywords: tools, unix
 ;; Created: 1998-12-27
 ;; Compatibility: Emacs 21 or later
@@ -64,6 +64,7 @@
   ("\\.texi\\'"       . "makeinfo %f")
   ("\\.mp\\'"         . "mptopdf %f")
   ("\\.pl\\'"         . "perl %f")
+  ("\\.py\\'"         . "python %f")
   ("\\.rb\\'"         . "ruby %f")
 ;;  ("\\.pl\\'"         . "perl -cw %f") ; syntax check
 ;;  ("\\.rb\\'"         . "ruby -cw %f") ; syntax check
