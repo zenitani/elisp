@@ -1,6 +1,6 @@
 ;;; -*- coding: iso-2022-7bit -*-
 
-;; Copyright (C) 2006, 2012, 2014  by Seiji Zenitani
+;; Copyright (C) 2006, 2012, 2014, 2016  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@mac.com>
 ;; Compatibility: Emacs 22 only
@@ -90,7 +90,7 @@
           nil t 1)
     (let ((str (match-string 2)))
       (replace-match ""  t nil)
-      (if (stringp str) (ucs-insert str))
+      (if (stringp str) (ucs-insert (string-to-number str 16)))
       )))
 
 (provide 'utf-tool)
