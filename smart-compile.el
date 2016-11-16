@@ -1,9 +1,9 @@
 ;;; smart-compile.el --- an interface to `compile'
 
-;; Copyright (C) 1998-2015  by Seiji Zenitani
+;; Copyright (C) 1998-2016  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@mac.com>
-;; Version: 20151112
+;; Version: 20161117
 ;; Keywords: tools, unix
 ;; Created: 1998-12-27
 ;; Compatibility: Emacs 21 or later
@@ -66,6 +66,7 @@
   ("\\.pl\\'"         . "perl %f")
   ("\\.py\\'"         . "python %f")
   ("\\.rb\\'"         . "ruby %f")
+  ("Rakefile\\'"      . "rake")
 ;;  ("\\.pl\\'"         . "perl -cw %f") ; syntax check
 ;;  ("\\.rb\\'"         . "ruby -cw %f") ; syntax check
 )  "Alist of filename patterns vs corresponding format control strings.
