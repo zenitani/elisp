@@ -1,9 +1,9 @@
 ;;; smart-compile.el --- an interface to `compile'
 
-;; Copyright (C) 1998-2016  by Seiji Zenitani
+;; Copyright (C) 1998-2017  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@mac.com>
-;; Version: 20161117
+;; Version: 20170828
 ;; Keywords: tools, unix
 ;; Created: 1998-12-27
 ;; Compatibility: Emacs 21 or later
@@ -14,7 +14,7 @@
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 2, or (at your option)
+;; the Free Software Foundation; either version 3, or (at your option)
 ;; any later version.
 
 ;; This file is distributed in the hope that it will be useful,
@@ -23,14 +23,14 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs; see the file COPYING.  If not, write to
-;; the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-;; Boston, MA 02111-1307, USA.
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;; Boston, MA 02110-1301, USA.
 
 ;;; Commentary:
 
 ;; This package provides `smart-compile' function.
-;; You can associates a particular file with a particular compile functions,
+;; You can associate a particular file with a particular compile function,
 ;; by editing `smart-compile-alist'.
 ;;
 ;; To use this package, add these lines to your .emacs file:
