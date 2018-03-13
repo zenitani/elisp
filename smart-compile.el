@@ -116,12 +116,14 @@ evaluate FUNCTION instead of running a compilation command.
 (defcustom smart-compile-make-program "make "
   "The command by which to invoke the make program."
   :type 'string
-  :group 'smart-compile)
+  :group 'smart-compile
+  :safe 'stringp)
 
 (defcustom smart-compile-option-string ""
   "The option string that replaces %o.  The default is empty."
   :type 'string
-  :group 'smart-compile)
+  :group 'smart-compile
+  :safe 'stringp)
 
 
 ;;;###autoload
