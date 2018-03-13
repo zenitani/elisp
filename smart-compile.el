@@ -1,4 +1,4 @@
-;;; smart-compile.el --- an interface to `compile'
+;;; smart-compile.el --- an interface to `compile' -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998-2023  by Seiji Zenitani
 
@@ -97,6 +97,8 @@ The following %-sequences will be replaced by:
 
   %o  value of `smart-compile-option-string'  ( \"user-defined\" ).
 
+  %p  set cursor position in minibuffer or at end if not specified.
+
 If the second item of the alist element is an emacs-lisp FUNCTION,
 evaluate FUNCTION instead of running a compilation command.
 "
@@ -119,19 +121,21 @@ This is usually the `default-directory', but if there's a \"build system\" (see
 taken relative to.")
 (make-variable-buffer-local 'smart-compile-build-root-directory)
 
-(defconst smart-compile-replace-alist '(
-  ("%F" . (buffer-file-name))
-  ("%f" . (file-relative-name
-           (buffer-file-name)
-           smart-compile-build-root-directory))
-  ("%n" . (file-relative-name
-           (file-name-sans-extension (buffer-file-name))
-           smart-compile-build-root-directory))
-  ("%e" . (or (file-name-extension (buffer-file-name)) ""))
-  ("%o" . smart-compile-option-string)
-;;   ("%U" . (user-login-name))
-  )
+(defconst smart-compile-replace-alist
+  '(("%F" . (buffer-file-name))
+    ("%f" . (file-relative-name
+             (buffer-file-name)
+             smart-compile-build-root-directory))
+    ("%n" . (file-relative-name
+             (file-name-sans-extension (buffer-file-name))
+             smart-compile-build-root-directory))
+    ("%e" . (or (file-name-extension (buffer-file-name)) ""))
+    ("%o" . smart-compile-option-string)
+    ("%p" . "")
+    ;;   ("%U" . (user-login-name))
+    )
   "Alist of %-sequences for format control strings in `smart-compile-alist'.")
+
 (put 'smart-compile-replace-alist 'risky-local-variable t)
 
 (defcustom smart-compile-make-program "make "
@@ -321,19 +325,23 @@ which is defined in `smart-compile-alist'."
   "Replace all the special format specifiers from `smart-compile-replace-alist' in FORMAT-STRING.
 
 If `buffer-file-name' is not bound to a string, no replacements will be made."
-  (if (and (boundp 'buffer-file-name)
-           (stringp buffer-file-name))
-      (let ((rlist smart-compile-replace-alist)
-            (case-fold-search nil))
-        (while rlist
-          (while (string-match (caar rlist) format-string)
-            (setq format-string
-                  (replace-match
-                   (eval (cdar rlist)) t nil format-string)))
-          (setq rlist (cdr rlist))
-          )
-        ))
-  format-string)
+  (let (curpos)
+    (if (and (boundp 'buffer-file-name)
+             (stringp buffer-file-name))
+        (let ((rlist smart-compile-replace-alist)
+              (case-fold-search nil)
+              token)
+          (while rlist
+            (let ((token (caar rlist))
+                  (replace (cdar rlist)))
+              (while (string-match token format-string)
+                (when (string= "%p" token)
+                  (setq curpos (match-beginning 0)))
+                (setq format-string
+                      (replace-match
+                       (eval (or replace "")) t nil format-string))))
+            (setq rlist (cdr rlist)))))
+    `(cons ,format-string ,(1+ (or curpos (length format-string))))))
 
 (provide 'smart-compile)
 
