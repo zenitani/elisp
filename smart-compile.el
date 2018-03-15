@@ -10,7 +10,7 @@
 ;; URL(en): https://github.com/zenitani/elisp/blob/master/smart-compile.el
 ;; URL(jp): http://th.nao.ac.jp/MEMBER/zenitani/elisp-j.html#smart-compile
 
-;; Contributors: Sakito Hisakura, Greg Pfell, Pierre Techoueyres
+;; Contributors: Sakito Hisakura, Greg Pfell, Pierre Téchoueyres
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
