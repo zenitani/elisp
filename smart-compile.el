@@ -1,9 +1,9 @@
 ;;; smart-compile.el --- an interface to `compile'
 
-;; Copyright (C) 1998-2018  by Seiji Zenitani
+;; Copyright (C) 1998-2019  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@mac.com>
-;; Version: 20180316
+;; Version: 20190422
 ;; Keywords: tools, unix
 ;; Created: 1998-12-27
 ;; Compatibility: Emacs 21 or later
@@ -56,7 +56,7 @@
   ("\\.[Cc]+[Pp]*\\'" . "g++ -O2 %f -lm -o %n")
   ("\\.cron\\(tab\\)?\\'" . "crontab %f")
   ("\\.[Ff]\\'"       . "gfortran %f -o %n")
-  ("\\.f90\\'"        . "gfortran %f -o %n")
+  ("\\.[Ff]90\\'"     . "gfortran %f -o %n")
   ("\\.hs\\'"         . "ghc %f -o %n")
   ("\\.java\\'"       . "javac %f")
   ("\\.m\\'"          . "gcc -O2 %f -lobjc -lpthread -o %n")
