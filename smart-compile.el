@@ -55,6 +55,7 @@
 ;;  ("\\.c\\'"          . "gcc -O2 %f -lm -o %n && ./%n")
   ("\\.[Cc]+[Pp]*\\'" . "g++ -O2 %f -lm -o %n")
   ("\\.cron\\(tab\\)?\\'" . "crontab %f")
+  ("\\.cu\\'"         . "nvcc %f -o %n")
   ("\\.[Ff]\\'"       . "gfortran %f -o %n")
   ("\\.[Ff]90\\'"     . "gfortran %f -o %n")
   ("\\.hs\\'"         . "ghc %f -o %n")
