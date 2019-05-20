@@ -10,8 +10,6 @@
 ;; URL(en): https://github.com/zenitani/elisp/blob/master/smart-compile.el
 ;; URL(jp): http://th.nao.ac.jp/MEMBER/zenitani/elisp-j.html#smart-compile
 
-;; Contributors: Sakito Hisakura, Greg Pfell
-
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation; either version 3, or (at your option)
@@ -64,7 +62,7 @@
   ("\\.mp\\'"         . "mptopdf %f")
   ("\\.php\\'"        . "php -l %f")
   ("\\.pl\\'"         . "perl %f")
-  ("\\.py\\'"         . "python %f")
+  ("\\.py\\'"         . "python3 %f")
   ("\\.rb\\'"         . "ruby %f")
   ("Rakefile\\'"      . "rake")
   ("\\.tex\\'"        . (tex-file))
