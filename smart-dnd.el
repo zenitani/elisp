@@ -1,6 +1,6 @@
 ;;; smart-dnd.el --- user-configurable drag-n-drop feature
 
-;; Copyright (C) 2003-2008, 2012, 2014, 2017  by Seiji Zenitani
+;; Copyright (C) 2003-2008, 2012, 2014, 2017, 2020  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@mac.com>
 ;; Keywords: tools
@@ -58,10 +58,11 @@
 ;;  (lambda ()
 ;;    (smart-dnd-setup
 ;;     '(
-;;       ("\\.\\(png\\|gif\\)\\'" . "<img src=\"%R\">\n")
-;;       ("\\.jpe?g\\'" . "<img src=\"%R\">\n")
-;;       ("\\.css\\'"   . "<link rel=\"stylesheet\" type=\"text/css\" href=\"%R\">\n" )
-;;       ("\\.js\\'"    . "<script type=\"text/javascript\" src=\"%R\"></script>\n" )
+;;       ("\\.png\\'" . "<img src=\"%R\" />\n")
+;;       ("\\.gif\\'" . "<img src=\"%R\" />\n")
+;;       ("\\.jpg\\'" . "<img src=\"%R\" />\n")
+;;       ("\\.css\\'" . "<link rel=\"stylesheet\" type=\"text/css\" href=\"%R\" />\n" )
+;;       ("\\.js\\'"  . "<script type=\"text/javascript\" src=\"%R\"></script>\n" )
 ;;       (".*" . "<a href=\"%R\">%f</a>\n")
 ;;       ))))
 ;;
@@ -75,11 +76,17 @@
 ;;       ("\\.tex\\'" . "\\input{%r}\n")
 ;;       ("\\.cls\\'" . "\\documentclass{%f}\n")
 ;;       ("\\.sty\\'" . "\\usepackage{%f}\n")
-;;       ("\\.e?ps\\'"  . "\\includegraphics[]{%r}\n")
-;;       ("\\.pdf\\'"   . "\\includegraphics[]{%r}\n")
-;;       ("\\.jpe?g\\'" . "\\includegraphics[]{%r}\n")
-;;       ("\\.png\\'"   . "\\includegraphics[]{%r}\n")
+;;       ("\\.eps\\'" . "\\includegraphics[]{%r}\n")
+;;       ("\\.ps\\'"  . "\\includegraphics[]{%r}\n")
+;;       ("\\.pdf\\'" . "\\includegraphics[]{%r}\n")
+;;       ("\\.jpg\\'" . "\\includegraphics[]{%r}\n")
+;;       ("\\.png\\'" . "\\includegraphics[]{%r}\n")
 ;;       ))))
+;;
+;; C/C++ mode:
+;;
+;; (add-hook 'c-mode-common-hook
+;;           (lambda () (smart-dnd-setup '(("\\.h\\'" . "#include <%f>")))))
 ;;
 
 

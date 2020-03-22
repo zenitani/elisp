@@ -1,9 +1,9 @@
 ;;; smart-compile.el --- an interface to `compile'
 
-;; Copyright (C) 1998-2019  by Seiji Zenitani
+;; Copyright (C) 1998-2020  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@mac.com>
-;; Version: 20190522
+;; Version: 20200322
 ;; Keywords: tools, unix
 ;; Created: 1998-12-27
 ;; Compatibility: Emacs 21 or later
@@ -50,10 +50,12 @@
   (html-helper-mode   . (browse-url-of-buffer))
   (octave-mode        . (run-octave))
   ("\\.c\\'"          . "gcc -O2 %f -lm -o %n")
-;;  ("\\.c\\'"          . "gcc -O2 %f -lm -o %n && ./%n")
+;;  ("\\.c\\'"          . "gcc -O2 %f -lm -o %n && ./%n") ;; unix, macOS
+;;  ("\\.c\\'"          . "gcc -O2 %f -lm -o %n && %n") ;; win
   ("\\.[Cc]+[Pp]*\\'" . "g++ -O2 %f -lm -o %n")
   ("\\.cron\\(tab\\)?\\'" . "crontab %f")
   ("\\.cu\\'"         . "nvcc %f -o %n")
+  ("\\.cuf\\'"        . "pgfortran %f -o %n")
   ("\\.[Ff]\\'"       . "gfortran %f -o %n")
   ("\\.[Ff]90\\'"     . "gfortran %f -o %n")
   ("\\.hs\\'"         . "ghc %f -o %n")
@@ -66,6 +68,7 @@
   ("\\.py\\'"         . "python3 %f")
   ("\\.rb\\'"         . "ruby %f")
   ("Rakefile\\'"      . "rake")
+  ("Gemfile\\'"       . "bundle install")
   ("\\.tex\\'"        . (tex-file))
   ("\\.texi\\'"       . "makeinfo %f")
 ;;  ("\\.pl\\'"         . "perl -cw %f") ; syntax check
