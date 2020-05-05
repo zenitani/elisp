@@ -3,7 +3,7 @@
 ;; Copyright (C) 1998-2020  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@mac.com>
-;; Version: 20200322
+;; Version: 20200505
 ;; Keywords: tools, unix
 ;; Created: 1998-12-27
 ;; Compatibility: Emacs 21 or later
@@ -58,6 +58,7 @@
   ("\\.cuf\\'"        . "pgfortran %f -o %n")
   ("\\.[Ff]\\'"       . "gfortran %f -o %n")
   ("\\.[Ff]90\\'"     . "gfortran %f -o %n")
+  ("\\.go\\'"         . "go run %f")
   ("\\.hs\\'"         . "ghc %f -o %n")
   ("\\.java\\'"       . "javac %f")
   ("\\.jl\\'"         . "julia %f")
