@@ -3,7 +3,7 @@
 ;; Copyright (C) 1998-2020  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@mac.com>
-;; Version: 20200505
+;; Version: 20200508
 ;; Keywords: tools, unix
 ;; Created: 1998-12-27
 ;; Compatibility: Emacs 21 or later
@@ -62,11 +62,14 @@
   ("\\.hs\\'"         . "ghc %f -o %n")
   ("\\.java\\'"       . "javac %f")
   ("\\.jl\\'"         . "julia %f")
+  ("\\.lua\\'"        . "lua %f")
   ("\\.m\\'"          . "gcc -O2 %f -lobjc -lpthread -o %n")
   ("\\.mp\\'"         . "mptopdf %f")
   ("\\.php\\'"        . "php -l %f")
   ("\\.pl\\'"         . "perl %f")
+  ("\\.p[l]?6\\'"     . "perl6 %f")
   ("\\.py\\'"         . "python3 %f")
+  ("\\.raku\\'"       . "perl6 %f")
   ("\\.rb\\'"         . "ruby %f")
   ("Rakefile\\'"      . "rake")
   ("Gemfile\\'"       . "bundle install")
