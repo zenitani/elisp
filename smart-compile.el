@@ -3,7 +3,7 @@
 ;; Copyright (C) 1998-2020  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@mac.com>
-;; Version: 20200508
+;; Version: 20200617
 ;; Keywords: tools, unix
 ;; Created: 1998-12-27
 ;; Compatibility: Emacs 21 or later
@@ -71,6 +71,7 @@
   ("\\.py\\'"         . "python3 %f")
   ("\\.raku\\'"       . "perl6 %f")
   ("\\.rb\\'"         . "ruby %f")
+  ("\\.rs\\'"         . "rustc %f -o %n")
   ("Rakefile\\'"      . "rake")
   ("Gemfile\\'"       . "bundle install")
   ("\\.tex\\'"        . (tex-file))
