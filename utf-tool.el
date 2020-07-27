@@ -2,10 +2,10 @@
 
 ;; Copyright (C) 2006, 2012, 2014, 2016  by Seiji Zenitani
 
-;; Author: Seiji Zenitani <zenitani@mac.com>
+;; Author: Seiji Zenitani <zenitani@gmail.com>
 ;; Compatibility: Emacs 22 only
 ;; URL(en): https://github.com/zenitani/elisp/blob/master/utf-tool.el
-;; URL(jp): http://th.nao.ac.jp/MEMBER/zenitani/elisp-j.html#utf-sty
+;; URL(jp): https://sci.nao.ac.jp/MEMBER/zenitani/elisp-j.html#utf-sty
 
 ;; utf パッケージ (utf.sty) を便利に使うための関数を提供します。
 ;; M-x utf-sty-encode-buffer, utf-sty-encode-region は

@@ -2,13 +2,13 @@
 
 ;; Copyright (C) 1998-2020  by Seiji Zenitani
 
-;; Author: Seiji Zenitani <zenitani@mac.com>
-;; Version: 20200617
+;; Author: Seiji Zenitani <zenitani@gmail.com>
+;; Version: 20200727
 ;; Keywords: tools, unix
 ;; Created: 1998-12-27
 ;; Compatibility: Emacs 21 or later
 ;; URL(en): https://github.com/zenitani/elisp/blob/master/smart-compile.el
-;; URL(jp): http://th.nao.ac.jp/MEMBER/zenitani/elisp-j.html#smart-compile
+;; URL(jp): https://sci.nao.ac.jp/MEMBER/zenitani/elisp-j.html#smart-compile
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@
   ("\\.[Cc]+[Pp]*\\'" . "g++ -O2 %f -lm -o %n")
   ("\\.cron\\(tab\\)?\\'" . "crontab %f")
   ("\\.cu\\'"         . "nvcc %f -o %n")
-  ("\\.cuf\\'"        . "pgfortran %f -o %n")
+  ("\\.cuf\\'"        . "nvfortran -Mcuda -O2 %f -o %n")
   ("\\.[Ff]\\'"       . "gfortran %f -o %n")
   ("\\.[Ff]90\\'"     . "gfortran %f -o %n")
   ("\\.go\\'"         . "go run %f")
@@ -65,7 +65,7 @@
   ("\\.lua\\'"        . "lua %f")
   ("\\.m\\'"          . "gcc -O2 %f -lobjc -lpthread -o %n")
   ("\\.mp\\'"         . "mptopdf %f")
-  ("\\.php\\'"        . "php -l %f")
+  ("\\.php\\'"        . "php %f")
   ("\\.pl\\'"         . "perl %f")
   ("\\.p[l]?6\\'"     . "perl6 %f")
   ("\\.py\\'"         . "python3 %f")
@@ -76,6 +76,7 @@
   ("Gemfile\\'"       . "bundle install")
   ("\\.tex\\'"        . (tex-file))
   ("\\.texi\\'"       . "makeinfo %f")
+;;  ("\\.php\\'"        . "php -l %f") ; syntax check
 ;;  ("\\.pl\\'"         . "perl -cw %f") ; syntax check
 ;;  ("\\.rb\\'"         . "ruby -cw %f") ; syntax check
 )  "Alist of filename patterns vs corresponding format control strings.

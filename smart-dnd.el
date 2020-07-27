@@ -2,12 +2,12 @@
 
 ;; Copyright (C) 2003-2008, 2012, 2014, 2017, 2020  by Seiji Zenitani
 
-;; Author: Seiji Zenitani <zenitani@mac.com>
+;; Author: Seiji Zenitani <zenitani@gmail.com>
 ;; Keywords: tools
 ;; Created: 2003-04-27
 ;; Compatibility: Emacs 22 or later
 ;; URL(en): https://github.com/zenitani/elisp/blob/master/smart-dnd.el
-;; URL(jp): http://th.nao.ac.jp/MEMBER/zenitani/elisp-j.html#smart-dnd
+;; URL(jp): https://sci.nao.ac.jp/MEMBER/zenitani/elisp-j.html#smart-dnd
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
