@@ -128,7 +128,8 @@ evaluate FUNCTION instead of running a compilation command.
 
 (defcustom smart-compile-build-system-alist
   '(("\\`[mM]akefile\\'" . smart-compile-make-program)
-    ("\\`Cargo.toml\\'" . "cargo build "))
+    ("\\`Cargo.toml\\'" . "cargo build ")
+    ("\\`pants\\'" . "./pants "))
   "Alist of \"build file\" patterns vs corresponding format control strings.
 
 Similar to `smart-compile-alist', each element may look like (REGEXP . STRING) or
@@ -165,6 +166,13 @@ If the matching alist entry is a (REGEXP . STRING), then the same %-sequence rep
         (string-match "\\`[a-zA-Z]:[/\\]\\'" dir))
    (string-match "\\`/[^:/][^:/]+:\\'" dir)))
 
+(defun smart-compile--filter-files (paths)
+  "Return a list with the members of PATHS that are regular files."
+  (let ((ret nil))
+    (dolist (path paths ret)
+      (when (file-regular-p path)
+        (push path ret)))))
+
 (defun smart-compile--find-build-file (alist)
   "Find the ALIST entry with a matching regexp in any parent directory."
   (let ((cur-dir default-directory)
@@ -176,7 +184,8 @@ If the matching alist entry is a (REGEXP . STRING), then the same %-sequence rep
         (while (and (not found-entry)
                     cur-alist)
           (let* ((regexp (caar cur-alist))
-                 (build-files (directory-files cur-dir t regexp nil)))
+                 (build-files
+                  (smart-compile--filter-files (directory-files cur-dir t regexp nil))))
             (if build-files
                 (setq found-entry (cons (car build-files) (cdar cur-alist)))
               (setq cur-alist (cdr cur-alist))))))
