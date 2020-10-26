@@ -223,7 +223,7 @@ which is defined in `smart-compile-alist'."
                     (if (stringp command-string-entry)
                         (smart-compile-string command-string-entry)
                       (eval command-string-entry))))
-              (if (y-or-n-p (format "%s is found. Try %S in its directory?"
+              (if (y-or-n-p (format "%s is found. Try '%s' in its directory?"
                                     (smart-compile--explicit-same-dir-filename matched-file)
                                     command-string))
                   ;; Same directory returns nil for `file-name-directory'.
