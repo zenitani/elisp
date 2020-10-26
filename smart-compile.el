@@ -119,19 +119,66 @@ evaluate FUNCTION instead of running a compilation command.
   "Alist of %-sequences for format control strings in `smart-compile-alist'.")
 (put 'smart-compile-replace-alist 'risky-local-variable t)
 
-(defvar smart-compile-check-makefile t)
-(make-variable-buffer-local 'smart-compile-check-makefile)
-
 (defcustom smart-compile-make-program "make "
   "The command by which to invoke the make program."
   :type 'string
   :group 'smart-compile)
+
+(defcustom smart-compile-build-system-alist
+  '(("[mM]akefile" . smart-compile-make-program))
+  "Alist of \"build file\" patterns vs corresponding format control strings.
+
+Similar to `smart-compile-alist', each element may look like (REGEXP . STRING) or
+(REGEXP . SEXP).
+
+If a \"build file\" matching the regexp exists in any parent directory, the `compile-command'
+first changes to the directory containing the build file, and then the string or the sexp
+result is used as the rest of the command.
+
+If the matching alist entry is a (REGEXP . STRING), then the same %-sequence replacements from
+`smart-compile-replace-alist' are applied to the string."
+  :type '(repeat
+          (cons
+           (regexp :tag "Build filename pattern")
+           (choice
+            (string :tag "Compilation command")
+            (sexp :tag "Lisp expression"))))
+  :group 'smart-compile)
+(put 'smart-compile-build-system-alist 'risky-local-variable t)
+
+(defvar smart-compile-check-build-system t)
+(make-variable-buffer-local 'smart-compile-check-build-system)
 
 (defcustom smart-compile-option-string ""
   "The option string that replaces %o.  The default is empty."
   :type 'string
   :group 'smart-compile)
 
+(defun smart-compile--is-root-directory (dir)
+  "Taken from `ido-is-root-directory'."
+  (or
+   (string-equal "/" dir)
+   (and (memq system-type '(windows-nt ms-dos))
+        (string-match "\\`[a-zA-Z]:[/\\]\\'" dir))
+   (string-match "\\`/[^:/][^:/]+:\\'" dir)))
+
+(defun smart-compile--find-build-file (alist)
+  "Find the ALIST entry with a matching regexp in any parent directory."
+  (let ((cur-dir default-directory)
+        (found-entry nil))
+    (while (and (not found-entry)
+                (not (smart-compile--is-root-directory cur-dir)))
+      ;; Within each parent directory, loop over the alist and try matching each regexp.
+      (let ((cur-alist alist))
+        (while (and (not found-entry)
+                    cur-alist)
+          (let* ((regexp (caar cur-alist))
+                 (build-files (directory-files cur-dir t regexp nil)))
+            (if build-files
+                (setq found-entry (cons (car build-files) (cdar cur-alist)))
+              (setq cur-alist (cdr cur-alist))))))
+      (setq cur-dir (expand-file-name ".." cur-dir)))
+    found-entry))
 
 ;;;###autoload
 (defun smart-compile (&optional arg)
@@ -157,18 +204,28 @@ which is defined in `smart-compile-alist'."
       (setq not-yet nil)
       )
 
-     ;; make?
-     ((and smart-compile-check-makefile
-           (or (file-readable-p "Makefile")
-               (file-readable-p "makefile")))
-      (if (y-or-n-p "Makefile is found.  Try 'make'? ")
-          (progn
-            (set (make-local-variable 'compile-command) "make ")
-            (call-interactively 'compile)
-            (setq not-yet nil)
-            )
-        (setq smart-compile-check-makefile nil)))
-
+     ;; make? or other build systems?
+     (smart-compile-check-build-system
+      (let ((maybe-match (smart-compile--find-build-file smart-compile-build-system-alist)))
+        (if maybe-match
+            (let* ((matched-file (file-relative-name (car maybe-match)))
+                   (command-string-entry (cdr maybe-match))
+                   (command-string
+                    (if (stringp command-string-entry)
+                        (smart-compile-string command-string-entry)
+                      (eval command-string-entry))))
+              (if (y-or-n-p (format "%s is found. Try %S in its directory?"
+                                    matched-file command-string))
+                  ;; Same directory returns nil for `file-name-directory'.
+                  (let ((wrapping-dir (file-name-directory matched-file)))
+                    (set (make-local-variable 'compile-command)
+                         (if wrapping-dir
+                             (format "cd %s && %s" wrapping-dir command-string)
+                           command-string))
+                    (call-interactively 'compile)
+                    (setq not-yet nil))
+                (setq smart-compile-check-build-system nil))))
+        ))
      ) ;; end of (cond ...)
 
     ;; compile
