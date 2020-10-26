@@ -188,7 +188,7 @@ which is defined in `smart-compile-alist'."
   (interactive "p")
   (let ((name (buffer-file-name))
         (not-yet t))
-    
+
     (if (not name)(error "cannot get filename."))
 ;;     (message (number-to-string arg))
 
@@ -229,7 +229,7 @@ which is defined in `smart-compile-alist'."
      ) ;; end of (cond ...)
 
     ;; compile
-    (let( (alist smart-compile-alist) 
+    (let( (alist smart-compile-alist)
           (case-fold-search nil)
           (function nil) )
       (while (and alist not-yet)
@@ -271,14 +271,14 @@ which is defined in `smart-compile-alist'."
               (set (make-local-variable 'compile-command) name)
             ))
       )
-    
+
     ;; compile
     (if not-yet (call-interactively 'compile) )
 
     ))
 
 (defun smart-compile-string (format-string)
-  "Document forthcoming..."
+  "Replace all the special format specifiers from `smart-compile-replace-alist' in FORMAT-STRING."
   (if (and (boundp 'buffer-file-name)
            (stringp buffer-file-name))
       (let ((rlist smart-compile-replace-alist)
