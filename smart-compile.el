@@ -125,7 +125,8 @@ evaluate FUNCTION instead of running a compilation command.
   :group 'smart-compile)
 
 (defcustom smart-compile-build-system-alist
-  '(("[mM]akefile" . smart-compile-make-program))
+  '(("\\`[mM]akefile\\'" . smart-compile-make-program)
+    ("\\`Cargo.toml\\'" . "cargo build "))
   "Alist of \"build file\" patterns vs corresponding format control strings.
 
 Similar to `smart-compile-alist', each element may look like (REGEXP . STRING) or
