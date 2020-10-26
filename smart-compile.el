@@ -30,6 +30,8 @@
 ;; This package provides `smart-compile' function.
 ;; You can associate a particular file with a particular compile function,
 ;; by editing `smart-compile-alist'.
+;; If you are using a build system such as make or cargo, you can associate its build file with a
+;; compile function as well, by editing `smart-compile-build-system-alist'.
 ;;
 ;; To use this package, add these lines to your .emacs file:
 ;;     (require 'smart-compile)
@@ -181,6 +183,12 @@ If the matching alist entry is a (REGEXP . STRING), then the same %-sequence rep
       (setq cur-dir (expand-file-name ".." cur-dir)))
     found-entry))
 
+(defun smart-compile--explicit-same-dir-filename (path)
+  "Return a file path that always has a leading directory component."
+  (if (file-name-directory path)
+      path
+    (format "./%s" path)))
+
 ;;;###autoload
 (defun smart-compile (&optional arg)
   "An interface to `compile'.
@@ -216,7 +224,8 @@ which is defined in `smart-compile-alist'."
                         (smart-compile-string command-string-entry)
                       (eval command-string-entry))))
               (if (y-or-n-p (format "%s is found. Try %S in its directory?"
-                                    matched-file command-string))
+                                    (smart-compile--explicit-same-dir-filename matched-file)
+                                    command-string))
                   ;; Same directory returns nil for `file-name-directory'.
                   (let ((wrapping-dir (file-name-directory matched-file)))
                     (set (make-local-variable 'compile-command)
