@@ -129,7 +129,7 @@ evaluate FUNCTION instead of running a compilation command.
 (defcustom smart-compile-build-system-alist
   '(("\\`[mM]akefile\\'" . smart-compile-make-program)
     ("\\`Cargo.toml\\'" . "cargo build ")
-    ("\\`pants\\'" . "./pants "))
+    ("\\`pants\\'" . "./pants %f"))
   "Alist of \"build file\" patterns vs corresponding format control strings.
 
 Similar to `smart-compile-alist', each element may look like (REGEXP . STRING) or
@@ -139,8 +139,9 @@ If a \"build file\" matching the regexp exists in any parent directory, the `com
 first changes to the directory containing the build file, and then the string or the sexp
 result is used as the rest of the command.
 
-If the matching alist entry is a (REGEXP . STRING), then the same %-sequence replacements from
-`smart-compile-replace-alist' are applied to the string."
+NOTE: If the matching alist entry is a (REGEXP . STRING), then a similar sequence of %-sequence
+replacements from `smart-compile-replace-alist' are applied to the string, but %f and %n are
+relative to the \"build root\" directory containing the \"build file\"."
   :type '(repeat
           (cons
            (regexp :tag "Build filename pattern")
@@ -224,19 +225,20 @@ which is defined in `smart-compile-alist'."
 
      ;; make? or other build systems?
      (smart-compile-check-build-system
-      (let ((maybe-match (smart-compile--find-build-file smart-compile-build-system-alist)))
-        (if maybe-match
-            (let* ((matched-file (file-relative-name (car maybe-match)))
-                   (command-string-entry (cdr maybe-match))
+      (let ((maybe-build-file (smart-compile--find-build-file smart-compile-build-system-alist)))
+        (if maybe-build-file
+            (let* ((build-file (expand-file-name (car maybe-build-file)))
+                   (command-or-string-entry (cdr maybe-build-file))
                    (command-string
-                    (if (stringp command-string-entry)
-                        (smart-compile-string command-string-entry)
-                      (eval command-string-entry))))
+                    (if (stringp command-or-string-entry)
+                        (let ((smart-compile-current-buffer build-file))
+                          (smart-compile-string command-or-string-entry))
+                      (eval command-or-string-entry))))
               (if (y-or-n-p (format "%s is found. Try '%s' in its directory?"
-                                    (smart-compile--explicit-same-dir-filename matched-file)
+                                    (smart-compile--explicit-same-dir-filename build-file)
                                     command-string))
                   ;; Same directory returns nil for `file-name-directory'.
-                  (let ((wrapping-dir (file-name-directory matched-file)))
+                  (let ((wrapping-dir (file-name-directory build-file)))
                     (set (make-local-variable 'compile-command)
                          (if wrapping-dir
                              (format "cd %s && %s" wrapping-dir command-string)
@@ -297,7 +299,9 @@ which is defined in `smart-compile-alist'."
     ))
 
 (defun smart-compile-string (format-string)
-  "Replace all the special format specifiers from `smart-compile-replace-alist' in FORMAT-STRING."
+  "Replace all the special format specifiers from `smart-compile-replace-alist' in FORMAT-STRING.
+
+If `buffer-file-name' is not bound to a string, no replacements will be made."
   (if (and (boundp 'buffer-file-name)
            (stringp buffer-file-name))
       (let ((rlist smart-compile-replace-alist)
