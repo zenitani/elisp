@@ -30,7 +30,7 @@
 ;; This package provides `smart-compile' function.
 ;; You can associate a particular file with a particular compile function,
 ;; by editing `smart-compile-alist'.
-;; If you are using a build system such as make or cargo, you can associate its build file with a
+;; If you are using a build system such as make or cargo, you can associate its build system file with a
 ;; compile function as well, by editing `smart-compile-build-system-alist'.
 ;;
 ;; To use this package, add these lines to your .emacs file:
@@ -109,12 +109,19 @@ evaluate FUNCTION instead of running a compilation command.
    :group 'smart-compile)
 (put 'smart-compile-alist 'risky-local-variable t)
 
+(defvar smart-compile-build-root-directory nil
+  "The directory that the current file path should be taken relative to.")
+(make-variable-buffer-local 'smart-compile-build-root-directory)
+
 (defconst smart-compile-replace-alist '(
-  ("%F" . (buffer-file-name))
-  ("%f" . (file-name-nondirectory (buffer-file-name)))
-  ("%n" . (file-name-sans-extension
-           (file-name-nondirectory (buffer-file-name))))
-  ("%e" . (or (file-name-extension (buffer-file-name)) ""))
+  ("%F" . buffer-file-name)
+  ("%f" . (file-relative-name
+           buffer-file-name
+           smart-compile-build-root-directory))
+  ("%n" . (file-relative-name
+           (file-name-sans-extension buffer-file-name)
+           smart-compile-build-root-directory))
+  ("%e" . (or (file-name-extension buffer-file-name) ""))
   ("%o" . smart-compile-option-string)
 ;;   ("%U" . (user-login-name))
   )
@@ -130,18 +137,18 @@ evaluate FUNCTION instead of running a compilation command.
   '(("\\`[mM]akefile\\'" . smart-compile-make-program)
     ("\\`Cargo.toml\\'" . "cargo build ")
     ("\\`pants\\'" . "./pants %f"))
-  "Alist of \"build file\" patterns vs corresponding format control strings.
+  "Alist of \"build system file\" patterns vs corresponding format control strings.
 
 Similar to `smart-compile-alist', each element may look like (REGEXP . STRING) or
 (REGEXP . SEXP).
 
-If a \"build file\" matching the regexp exists in any parent directory, the `compile-command'
-first changes to the directory containing the build file, and then the string or the sexp
+If a \"build system file\" matching the regexp exists in any parent directory, the `compile-command'
+first changes to the directory containing the build system file, and then the string or the sexp
 result is used as the rest of the command.
 
 NOTE: If the matching alist entry is a (REGEXP . STRING), then a similar sequence of %-sequence
 replacements from `smart-compile-replace-alist' are applied to the string, but %f and %n are
-relative to the \"build root\" directory containing the \"build file\"."
+relative to the \"build root\" directory containing the \"build system file\"."
   :type '(repeat
           (cons
            (regexp :tag "Build filename pattern")
@@ -211,6 +218,8 @@ which is defined in `smart-compile-alist'."
     (if (not name)(error "cannot get filename."))
 ;;     (message (number-to-string arg))
 
+    ;; Set the "root" directory next to the file, for most cases.
+    (setq-local smart-compile-build-root-directory default-directory)
     (cond
 
      ;; local command
@@ -231,7 +240,8 @@ which is defined in `smart-compile-alist'."
                    (command-or-string-entry (cdr maybe-build-file))
                    (command-string
                     (if (stringp command-or-string-entry)
-                        (let ((smart-compile-current-buffer build-file))
+                        ;; Set the root directory as the one containing the "build system file".
+                        (let ((smart-compile-build-root-directory (file-name-directory build-file)))
                           (smart-compile-string command-or-string-entry))
                       (eval command-or-string-entry))))
               (if (y-or-n-p (format "%s is found. Try '%s' in its directory?"
