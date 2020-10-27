@@ -151,7 +151,7 @@ replacements from `smart-compile-replace-alist' are applied to the string, but %
 relative to the \"build root\" directory containing the \"build system file\"."
   :type '(repeat
           (cons
-           (regexp :tag "Build filename pattern")
+           (regexp :tag "Build system filename pattern")
            (choice
             (string :tag "Compilation command")
             (sexp :tag "Lisp expression"))))
@@ -181,7 +181,7 @@ relative to the \"build root\" directory containing the \"build system file\"."
       (when (file-regular-p path)
         (push path ret)))))
 
-(defun smart-compile--find-build-file (alist)
+(defun smart-compile--find-build-system-file (alist)
   "Find the ALIST entry with a matching regexp in any parent directory."
   (let ((cur-dir default-directory)
         (found-entry nil))
@@ -192,10 +192,10 @@ relative to the \"build root\" directory containing the \"build system file\"."
         (while (and (not found-entry)
                     cur-alist)
           (let* ((regexp (caar cur-alist))
-                 (build-files
+                 (build-system-files
                   (smart-compile--filter-files (directory-files cur-dir t regexp nil))))
-            (if build-files
-                (setq found-entry (cons (car build-files) (cdar cur-alist)))
+            (if build-system-files
+                (setq found-entry (cons (car build-system-files) (cdar cur-alist)))
               (setq cur-alist (cdr cur-alist))))))
       (setq cur-dir (expand-file-name ".." cur-dir)))
     found-entry))
@@ -234,21 +234,23 @@ which is defined in `smart-compile-alist'."
 
      ;; make? or other build systems?
      (smart-compile-check-build-system
-      (let ((maybe-build-file (smart-compile--find-build-file smart-compile-build-system-alist)))
-        (if maybe-build-file
-            (let* ((build-file (expand-file-name (car maybe-build-file)))
-                   (command-or-string-entry (cdr maybe-build-file))
+      (let ((maybe-build-system-file
+             (smart-compile--find-build-system-file smart-compile-build-system-alist)))
+        (if maybe-build-system-file
+            (let* ((build-system-file (expand-file-name (car maybe-build-system-file)))
+                   (command-or-string-entry (cdr maybe-build-system-file))
                    (command-string
                     (if (stringp command-or-string-entry)
                         ;; Set the root directory as the one containing the "build system file".
-                        (let ((smart-compile-build-root-directory (file-name-directory build-file)))
+                        (let ((smart-compile-build-root-directory
+                               (file-name-directory build-system-file)))
                           (smart-compile-string command-or-string-entry))
                       (eval command-or-string-entry))))
               (if (y-or-n-p (format "%s is found. Try '%s' in its directory?"
-                                    (smart-compile--explicit-same-dir-filename build-file)
+                                    (smart-compile--explicit-same-dir-filename build-system-file)
                                     command-string))
                   ;; Same directory returns nil for `file-name-directory'.
-                  (let ((wrapping-dir (file-name-directory build-file)))
+                  (let ((wrapping-dir (file-name-directory build-system-file)))
                     (set (make-local-variable 'compile-command)
                          (if wrapping-dir
                              (format "cd %s && %s" wrapping-dir command-string)
