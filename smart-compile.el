@@ -219,7 +219,7 @@ which is defined in `smart-compile-alist'."
 ;;     (message (number-to-string arg))
 
     ;; Set the "root" directory next to the file, for most cases.
-    (setq-local smart-compile-build-root-directory default-directory)
+    (setq smart-compile-build-root-directory default-directory)
     (cond
 
      ;; local command
