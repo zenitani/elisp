@@ -74,8 +74,6 @@
   ("\\.raku\\'"       . "perl6 %f")
   ("\\.rb\\'"         . "ruby %f")
   ("\\.rs\\'"         . "rustc %f -o %n")
-  ("Rakefile\\'"      . "rake")
-  ("Gemfile\\'"       . "bundle install")
   ("\\.tex\\'"        . (tex-file))
   ("\\.texi\\'"       . "makeinfo %f")
 ;;  ("\\.php\\'"        . "php -l %f") ; syntax check
@@ -136,7 +134,9 @@ evaluate FUNCTION instead of running a compilation command.
 (defcustom smart-compile-build-system-alist
   '(("\\`[mM]akefile\\'" . smart-compile-make-program)
     ("\\`Cargo.toml\\'" . "cargo build ")
-    ("\\`pants\\'" . "./pants %f"))
+    ("\\`pants\\'" . "./pants %f")
+    ("Gemfile\\'"       . "bundle install")
+    ("Rakefile\\'"      . "rake"))
   "Alist of \"build system file\" patterns vs corresponding format control strings.
 
 Similar to `smart-compile-alist', each element may look like (REGEXP . STRING) or
