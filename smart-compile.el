@@ -108,7 +108,11 @@ evaluate FUNCTION instead of running a compilation command.
 (put 'smart-compile-alist 'risky-local-variable t)
 
 (defvar smart-compile-build-root-directory nil
-  "The directory that the current file path should be taken relative to.")
+  "The directory that the current file path should be taken relative to.
+
+This is usually the `default-directory', but if there's a \"build system\" (see
+`smart-compile-build-system-alist'), it will be the directory that the current file path should be
+taken relative to.")
 (make-variable-buffer-local 'smart-compile-build-root-directory)
 
 (defconst smart-compile-replace-alist '(
@@ -117,7 +121,7 @@ evaluate FUNCTION instead of running a compilation command.
            (buffer-file-name)
            smart-compile-build-root-directory))
   ("%n" . (file-relative-name/
-           (file-name-sans-extension (buffer-fi [] le-name))
+           (file-name-sans-extension (buffer-file-name))
            smart-compile-build-root-directory))
   ("%e" . (or (file-name-extension (buffer-file-name)) ""))
   ("%o" . smart-compile-option-string)
@@ -133,10 +137,10 @@ evaluate FUNCTION instead of running a compilation command.
 
 (defcustom smart-compile-build-system-alist
   '(("\\`[mM]akefile\\'" . smart-compile-make-program)
-    ("\\`Cargo.toml\\'" . "cargo build ")
-    ("\\`pants\\'" . "./pants %f")
     ("Gemfile\\'"       . "bundle install")
-    ("Rakefile\\'"      . "rake"))
+    ("Rakefile\\'"      . "rake")
+    ("\\`Cargo.toml\\'" . "cargo build ")
+    ("\\`pants\\'" . "./pants %f"))
   "Alist of \"build system file\" patterns vs corresponding format control strings.
 
 Similar to `smart-compile-alist', each element may look like (REGEXP . STRING) or
@@ -246,15 +250,14 @@ which is defined in `smart-compile-alist'."
                                (file-name-directory build-system-file)))
                           (smart-compile-string command-or-string-entry))
                       (eval command-or-string-entry))))
-              (if (y-or-n-p (format "%s is found. Try '%s' in its directory?"
+              (if (y-or-n-p (format "%s is found. Try '%s'?"
                                     (smart-compile--explicit-same-dir-filename build-system-file)
                                     command-string))
                   ;; Same directory returns nil for `file-name-directory'.
-                  (let ((wrapping-dir (file-name-directory build-system-file)))
+                  (let ((default-directory (or (file-name-directory build-system-file)
+                                               default-directory)))
                     (set (make-local-variable 'compile-command)
-                         (if wrapping-dir
-                             (format "cd %s && %s" wrapping-dir command-string)
-                           command-string))
+                         command-string)
                     (call-interactively 'compile)
                     (setq not-yet nil))
                 (setq smart-compile-check-build-system nil))))
