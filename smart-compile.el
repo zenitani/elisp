@@ -114,14 +114,14 @@ evaluate FUNCTION instead of running a compilation command.
 (make-variable-buffer-local 'smart-compile-build-root-directory)
 
 (defconst smart-compile-replace-alist '(
-  ("%F" . buffer-file-name)
+  ("%F" . (buffer-file-name))
   ("%f" . (file-relative-name
-           buffer-file-name
+           (buffer-file-name)
            smart-compile-build-root-directory))
-  ("%n" . (file-relative-name
-           (file-name-sans-extension buffer-file-name)
+  ("%n" . (file-relative-name/
+           (file-name-sans-extension (buffer-fi [] le-name))
            smart-compile-build-root-directory))
-  ("%e" . (or (file-name-extension buffer-file-name) ""))
+  ("%e" . (or (file-name-extension (buffer-file-name)) ""))
   ("%o" . smart-compile-option-string)
 ;;   ("%U" . (user-login-name))
   )
