@@ -3,7 +3,7 @@
 ;; Copyright (C) 1998-2020  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@gmail.com>
-;; Version: 20200727
+;; Version: 20201030
 ;; Keywords: tools, unix
 ;; Created: 1998-12-27
 ;; Compatibility: Emacs 21 or later
@@ -120,7 +120,7 @@ taken relative to.")
   ("%f" . (file-relative-name
            (buffer-file-name)
            smart-compile-build-root-directory))
-  ("%n" . (file-relative-name/
+  ("%n" . (file-relative-name
            (file-name-sans-extension (buffer-file-name))
            smart-compile-build-root-directory))
   ("%e" . (or (file-name-extension (buffer-file-name)) ""))
@@ -137,10 +137,10 @@ taken relative to.")
 
 (defcustom smart-compile-build-system-alist
   '(("\\`[mM]akefile\\'" . smart-compile-make-program)
-    ("Gemfile\\'"       . "bundle install")
-    ("Rakefile\\'"      . "rake")
-    ("\\`Cargo.toml\\'" . "cargo build ")
-    ("\\`pants\\'" . "./pants %f"))
+    ("\\`Gemfile\\'"     . "bundle install")
+    ("\\`Rakefile\\'"    . "rake")
+    ("\\`Cargo.toml\\'"  . "cargo build ")
+    ("\\`pants\\'"       . "./pants %f"))
   "Alist of \"build system file\" patterns vs corresponding format control strings.
 
 Similar to `smart-compile-alist', each element may look like (REGEXP . STRING) or
@@ -250,7 +250,7 @@ which is defined in `smart-compile-alist'."
                                (file-name-directory build-system-file)))
                           (smart-compile-string command-or-string-entry))
                       (eval command-or-string-entry))))
-              (if (y-or-n-p (format "%s is found. Try '%s'?"
+              (if (y-or-n-p (format "%s is found. Try '%s'? "
                                     (smart-compile--explicit-same-dir-filename build-system-file)
                                     command-string))
                   ;; Same directory returns nil for `file-name-directory'.
