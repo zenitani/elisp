@@ -1,9 +1,9 @@
 ;;; smart-compile.el --- an interface to `compile'
 
-;; Copyright (C) 1998-2020  by Seiji Zenitani
+;; Copyright (C) 1998-2021  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@gmail.com>
-;; Version: 20201030
+;; Version: 20211127
 ;; Keywords: tools, unix
 ;; Created: 1998-12-27
 ;; Compatibility: Emacs 21 or later
@@ -74,6 +74,7 @@
   ("\\.raku\\'"       . "perl6 %f")
   ("\\.rb\\'"         . "ruby %f")
   ("\\.rs\\'"         . "rustc %f -o %n")
+  ("\\.swift\\'"      . "swiftc %f -o %n")
   ("\\.tex\\'"        . (tex-file))
   ("\\.texi\\'"       . "makeinfo %f")
 ;;  ("\\.php\\'"        . "php -l %f") ; syntax check
