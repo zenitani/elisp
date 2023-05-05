@@ -1,6 +1,6 @@
 ;;; smart-compile.el --- an interface to `compile'
 
-;; Copyright (C) 1998-2021  by Seiji Zenitani
+;; Copyright (C) 1998-2023  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@gmail.com>
 ;; Version: 20211127
@@ -66,6 +66,7 @@
   ("\\.jl\\'"         . "julia %f")
   ("\\.lua\\'"        . "lua %f")
   ("\\.m\\'"          . "gcc -O2 %f -lobjc -lpthread -o %n")
+  ("\\.mojo\\'"       . "mojo %f")
   ("\\.mp\\'"         . "mptopdf %f")
   ("\\.php\\'"        . "php %f")
   ("\\.pl\\'"         . "perl %f")
