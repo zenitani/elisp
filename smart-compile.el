@@ -3,7 +3,7 @@
 ;; Copyright (C) 1998-2023  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@gmail.com>
-;; Version: 20211127
+;; Version: 20230508
 ;; Keywords: tools, unix
 ;; Created: 1998-12-27
 ;; Compatibility: Emacs 21 or later
@@ -64,6 +64,7 @@
   ("\\.hs\\'"         . "ghc %f -o %n")
   ("\\.java\\'"       . "javac %f")
   ("\\.jl\\'"         . "julia %f")
+  ("\\.kt[s]?\\'"     . "kotlinc %f -o %n")
   ("\\.lua\\'"        . "lua %f")
   ("\\.m\\'"          . "gcc -O2 %f -lobjc -lpthread -o %n")
   ("\\.mojo\\'"       . "mojo %f")
@@ -78,6 +79,7 @@
   ("\\.swift\\'"      . "swiftc %f -o %n")
   ("\\.tex\\'"        . (tex-file))
   ("\\.texi\\'"       . "makeinfo %f")
+  ("\\.ts\\'"         . "tsc %f --outFile %n")
 ;;  ("\\.php\\'"        . "php -l %f") ; syntax check
 ;;  ("\\.pl\\'"         . "perl -cw %f") ; syntax check
 ;;  ("\\.rb\\'"         . "ruby -cw %f") ; syntax check
