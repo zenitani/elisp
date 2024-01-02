@@ -1,14 +1,18 @@
-;;; smart-compile.el --- an interface to `compile'
+;;; smart-compile.el --- an interface to `compile' -*- lexical-binding: t -*-
 
-;; Copyright (C) 1998-2023  by Seiji Zenitani
+;; Copyright (C) 1998-2024  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@gmail.com>
-;; Version: 20230822
+;; Version: 20240102
 ;; Keywords: tools, unix
 ;; Created: 1998-12-27
-;; Compatibility: Emacs 21 or later
+;; Compatibility: Emacs 24 or later
 ;; URL(en): https://github.com/zenitani/elisp/blob/master/smart-compile.el
 ;; URL(jp): https://sci.nao.ac.jp/MEMBER/zenitani/elisp-j.html#smart-compile
+
+;; Acknowledgments:
+;; I thank Sakito Hisakura, Pierre Téchoueyres, and Danny McClanahan for their contributions.
+;; I also employed Greg Pfell's GPL codelet.
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -90,12 +94,13 @@ format control string.  Instead of REGEXP, MAJOR-MODE can also be used.
 The compilation command will be generated from STRING.
 The following %-sequences will be replaced by:
 
-  %F  absolute pathname            ( /usr/local/bin/netscape.bin )
-  %f  file name without directory  ( netscape.bin )
-  %n  file name without extension  ( netscape )
-  %e  extension of file name       ( bin )
+  %F  absolute pathname            ( /home/zenitani/Desktop/test.py )
+  %f  file name without directory  ( test.py )
+  %n  file name without extension  ( test )
+  %e  extension of file name       ( py )
 
   %o  value of `smart-compile-option-string'  ( \"user-defined\" ).
+  %p  set the cursor position where the %p is (or at the end) in minibuffer.
 
 If the second item of the alist element is an emacs-lisp FUNCTION,
 evaluate FUNCTION instead of running a compilation command.
@@ -129,6 +134,7 @@ taken relative to.")
            smart-compile-build-root-directory))
   ("%e" . (or (file-name-extension (buffer-file-name)) ""))
   ("%o" . smart-compile-option-string)
+  ("%p" . "")
 ;;   ("%U" . (user-login-name))
   )
   "Alist of %-sequences for format control strings in `smart-compile-alist'.")
@@ -321,19 +327,21 @@ which is defined in `smart-compile-alist'."
   "Replace all the special format specifiers from `smart-compile-replace-alist' in FORMAT-STRING.
 
 If `buffer-file-name' is not bound to a string, no replacements will be made."
-  (if (and (boundp 'buffer-file-name)
-           (stringp buffer-file-name))
-      (let ((rlist smart-compile-replace-alist)
-            (case-fold-search nil))
-        (while rlist
-          (while (string-match (caar rlist) format-string)
+  (when (and (boundp 'buffer-file-name)
+             (stringp buffer-file-name))
+    (let ((case-fold-search nil)
+          curpos)
+      (dolist (elt smart-compile-replace-alist)
+        (let ((token (car elt))
+	      (replace (cdr elt)))
+	  (while (string-match token format-string)
+            (when (string= "%p" token)
+              (setq curpos (match-beginning 0)))
             (setq format-string
                   (replace-match
-                   (eval (cdar rlist)) t nil format-string)))
-          (setq rlist (cdr rlist))
-          )
-        ))
-  format-string)
+                   (eval (or replace "")) t nil format-string)))))
+      `(cons ,format-string ,(1+ (or curpos (length format-string))))
+      )))
 
 (provide 'smart-compile)
 
