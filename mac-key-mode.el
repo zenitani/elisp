@@ -26,13 +26,18 @@
 ;;; Commentary:
 
 ;; This package provides mac-key-mode, a minor mode that provides
-;; additional mac-like key bindings and extra elisp functions.
+;; additional mac-like key bindings and elisp functions.
 ;;
 ;; To use this package, add these lines to your .emacs file:
 ;;
 ;;     (require 'mac-key-mode)
 ;;     (mac-key-mode 1)
 ;;
+;; With help from htmlize.el <https://github.com/hniksic/emacs-htmlize>,
+;; it provides the following printing functions.
+;;
+;; * M-x mac-key-print-buffer
+;; * M-x mac-key-print-buffer-with-faces
 
 
 ;;; Code:
@@ -51,15 +56,22 @@ when `mac-key-mode' is on.")
   :type 'hook
   :group 'mac-key-mode)
 
-;; (defcustom mac-key-advanced-setting t
-;;   "If non-nil, `mac-key-mode' activates addional settings:
-;; 1) menu items are added to the File menu and the Edit menu, and
-;; 2) the SPC key invokes Quick Look information in dired-mode."
-;;   :group 'mac-key-mode
-;;   :type 'boolean)
 
-;; (defvar mac-key-backup-command-modifier nil
-;;   "Internal variable.  Do not use this.")
+(defcustom mac-key-printing t
+  "If non-nil, activate printing functions.
+This requires htmlize.el <https://github.com/hniksic/emacs-htmlize>."
+  :group 'mac-key-mode
+  :type 'boolean)
+
+(defcustom mac-key-print-kill-view-buffers t
+  "If non-nil, delete the temporary buffer after sending it to TextEdit.app,
+when printing with the `mac-key-print-buffer' functions. "
+  :group 'mac-key-mode
+  :type 'boolean)
+
+(defcustom mac-key-print-font-size 8
+  "Font size, in points, for ordinary text, for `mac-key-printing'. "
+  :group 'mac-key-mode)
 
 
 ;; process objects
@@ -74,6 +86,7 @@ when `mac-key-mode' is on.")
     (define-key map [?\s-w] 'mac-key-close-window)
     (define-key map [?\s-Z] 'undo-redo)
     (define-key map [?\s-i] 'mac-key-show-in-finder)
+    (define-key map [?\s-p] 'mac-key-print-buffer-with-faces)
     (define-key map [?\s-/] 'info)
     (define-key map [?\s-.] 'keyboard-quit)
     (define-key map [s-up] 'beginning-of-buffer)
@@ -105,59 +118,59 @@ When Mac Key mode is enabled, mac-style key bindings are provided."
   (if mac-key-mode
       (progn
 
-        ;; (setq mac-key-backup-command-modifier mac-command-modifier)
-        ;; (setq mac-command-modifier 'alt)
-        ;; (if (boundp 'mac-key-mode-internal)
-        ;;     (setq mac-key-mode-internal t))
+        ;; menu items
+        (define-key-after menu-bar-file-menu [mac-key-file-separator1]
+          '("--" . nil) 'recover-session)
+        (define-key-after menu-bar-file-menu [mac-key-print-buffer-color]
+          '(menu-item "Print Buffer" mac-key-print-buffer-with-faces
+		      :help "Print current file/directory via TextEdit.app"
+		      :enable (and mac-key-printing (featurep 'htmlize)))
+          'mac-key-file-separator1)
+        (define-key-after menu-bar-file-menu [mac-key-print-buffer-mono]
+          '(menu-item "Print Buffer (Mono)" mac-key-print-buffer
+		      :help "Print current file/directory via TextEdit.app"
+		      :enable (and mac-key-printing (featurep 'htmlize)))
+          'mac-key-print-buffer-color)
+        (define-key-after menu-bar-file-menu [mac-key-file-separator2]
+          '("--" . nil) 'mac-key-print-buffer-mono)
+        (define-key-after menu-bar-file-menu [mac-key-show-in-finder]
+          '(menu-item "Show In Finder" mac-key-show-in-finder
+		      :help "Display current file/directory in a Finder window"
+		      :enable (or (and (boundp 'buffer-file-name) buffer-file-name)
+				  (and (boundp 'dired-directory) dired-directory)))
+          'mac-key-file-separator2)
+        (define-key-after menu-bar-file-menu [mac-key-open-terminal]
+          '(menu-item "Open Terminal" mac-key-open-terminal
+		      :help "Launch Terminal.app and go to the relevant directory")
+          'mac-key-show-in-finder)
 
-        ;; ;; turn on advanced settings
-        ;; (when mac-key-advanced-setting
-
-          ;; menu items
-          (define-key-after menu-bar-file-menu [mac-key-file-separator]
-            '("--" . nil) 'recover-session)
-          (define-key-after menu-bar-file-menu [mac-key-show-in-finder]
-            '(menu-item "Show In Finder" mac-key-show-in-finder
-              :help "Display current file/directory in a Finder window"
-              :enable (or (and (boundp 'buffer-file-name) buffer-file-name)
-                          (and (boundp 'dired-directory) dired-directory)))
-            'mac-key-file-separator)
-          (define-key-after menu-bar-file-menu [mac-key-open-terminal]
-            '(menu-item "Open Terminal" mac-key-open-terminal
-              :help "Launch Terminal.app and go to the relevant directory")
-            'mac-key-show-in-finder)
-
-          ;; assign mac-key-quick-look to the SPC key
-          (if (boundp 'dired-mode-map)
-              (define-key dired-mode-map " " 'mac-key-quick-look)
-            (add-hook 'dired-mode-hook
-                      (lambda () (interactive)
-                        (define-key dired-mode-map " " 'mac-key-quick-look)))
-            )
+        ;; assign mac-key-quick-look to the SPC key
+        (if (boundp 'dired-mode-map)
+            (define-key dired-mode-map " " 'mac-key-quick-look)
+          (add-hook 'dired-mode-hook
+                    (lambda () (interactive)
+                      (define-key dired-mode-map " " 'mac-key-quick-look)))
+          )
 	  
-          );)
+        );)
     (progn
 
-      ;; (setq mac-command-modifier mac-key-backup-command-modifier)
-      ;; (if (boundp 'mac-key-mode-internal)
-      ;;     (setq mac-key-mode-internal nil))
+      ;; menu items
+      (global-unset-key [menu-bar file mac-key-file-separator1])
+      (global-unset-key [menu-bar file mac-key-print-buffer-color])
+      (global-unset-key [menu-bar file mac-key-print-buffer-mono])
+      (global-unset-key [menu-bar file mac-key-file-separator2])
+      (global-unset-key [menu-bar file mac-key-show-in-finder])
+      (global-unset-key [menu-bar file mac-key-open-terminal])
 
-      ;; ;; turn off advanced settings
-      ;; (when mac-key-advanced-setting
+      ;; restore SPC to dired-next-line (a bad way to deal with it)
+      (if (boundp 'dired-mode-map)
+          (define-key dired-mode-map " " 'dired-next-line))
+      (remove-hook 'dired-mode-hook
+                   (lambda () (interactive)
+                     (define-key dired-mode-map " " 'mac-key-quick-look)))
 
-        ;; menu items
-        (global-unset-key [menu-bar file mac-key-file-separator])
-        (global-unset-key [menu-bar file mac-key-show-in-finder])
-        (global-unset-key [menu-bar file mac-key-open-terminal])
-
-        ;; restore SPC to dired-next-line (a bad way to deal with it)
-        (if (boundp 'dired-mode-map)
-            (define-key dired-mode-map " " 'dired-next-line))
-        (remove-hook 'dired-mode-hook
-                     (lambda () (interactive)
-                       (define-key dired-mode-map " " 'mac-key-quick-look)))
-
-        );)
+      )
     ))
 
 
@@ -192,9 +205,7 @@ When Mac Key mode is enabled, mac-style key bindings are provided."
              (concat
               "tell application \"Finder\" to select (\""
               item "\" as POSIX file)"))
-            (if (fboundp 'mac-process-activate)
-                (mac-process-activate "com.apple.finder")
-              (do-applescript "tell application \"Finder\" to activate"))
+            (do-applescript "tell application \"Finder\" to activate")
             )
         (error err)))
 
@@ -219,14 +230,106 @@ When Mac Key mode is enabled, mac-style key bindings are provided."
              (concat "tell application \"Terminal\" to do script"
                      " with command \"cd \" & quoted form of \""
 		     item "\"" ))
-            (if (fboundp 'mac-process-activate)
-                (mac-process-activate "com.apple.Terminal")
-              (do-applescript "tell application \"Terminal\" to activate"))
+            (do-applescript "tell application \"Terminal\" to activate")
             )
         (error err))
       )
      (t (error "An error occured"))
      )))
+
+
+;; Print buffer contents (command + P)
+(defun mac-key-print-buffer-with-faces(&optional region-only)
+  "Convert buffer contents to html, preserving colors and decoration, and
+print it via TextEdit.app.
+If REGION-ONLY is non-nil then only the region is printed."
+  (interactive)
+  (if (not (featurep 'htmlize))
+      (message "It doesn't work, because htmlize is not available.")
+
+    (let* ((default-directory "~/") ;; When editing a remote file
+           (htmlize-after-hook nil)
+           (htmlize-generate-hyperlinks nil)
+           (htmlize-output-type 'css)
+           (htmlize-head-tags
+            (concat "<style>\n" "pre { \n"
+                    "font-size:" (int-to-string mac-key-print-font-size) "pt;\n"
+                    "word-wrap:break-word;\n" ;; to wrap long lines
+                    "}\n" "</style>\n"))
+           )
+      (message "printing...")
+      (do-applescript "tell application \"TextEdit.app\" to activate")
+      (do-applescript (concat "
+tell application \"TextEdit.app\"
+    try
+        print alias (POSIX file \"" (mac-key-print-htmlize-buffer-to-tempfile region-only) "\") with print dialog
+    end try
+end tell
+"))
+      (message "printing... done")
+    )))
+
+;; Print buffer contents (no color)
+(defun mac-key-print-buffer(&optional region-only)
+  "Convert buffer contents to html, and then print it via TextEdit.app.
+If REGION-ONLY is non-nil then only the region is printed."
+  (interactive)
+  (if (not (featurep 'htmlize))
+      (message "It doesn't work, because htmlize is not available.")
+
+    (let* ((default-directory "~/") ;; When editing a remote file
+           (htmlize-after-hook '(mac-key-print-monolize-html))
+           (htmlize-generate-hyperlinks nil)
+           (htmlize-output-type 'css)
+           (htmlize-head-tags
+            (concat "<style>\n" "pre { \n"
+                    "font-size:" (int-to-string mac-key-print-font-size) "pt;\n"
+                    "word-wrap:break-word;\n" ;; to wrap long lines
+                    "}\n" "</style>\n"))
+           )
+      (message "printing...")
+      (do-applescript "tell application \"TextEdit.app\" to activate")
+      (do-applescript (concat "
+tell application \"TextEdit.app\"
+    try
+        print alias (POSIX file \"" (mac-key-print-htmlize-buffer-to-tempfile region-only) "\") with print dialog
+    end try
+end tell
+"))
+      (message "printing... done")
+      )))
+
+(defun mac-key-print-monolize-html ()
+  (narrow-to-region
+   (search-forward "    <!--")
+   (search-forward "-->"))
+  (goto-char (point-min))
+  (replace-regexp "        color: \#.*" "")
+  (replace-regexp "        background-color: \#.*" "")
+  (widen)
+  )
+
+(defun mac-key-print-htmlize-buffer-to-tempfile(region-only)
+  "Convert buffer contents to html, preserving colors and decoration.
+If REGION-ONLY is non-nil then only region contents are htmlized.
+Return a cons with temporary file name followed by temporary buffer."
+  (save-excursion
+    (let (;; Just use Fundamental mode for the temp buffer
+          magic-mode-alist
+          auto-mode-alist
+          (html-temp-buffer
+           (if (not region-only)
+               (htmlize-buffer (current-buffer))
+             (let ((start (mark)) (end (point)))
+               (or (<= start end)
+                   (setq start (prog1 end (setq end start))))
+               (htmlize-region start end))))
+          (file (make-temp-file "emacs-print-" nil ".html")))
+      (set-buffer html-temp-buffer)
+      (write-file file nil)
+      (if mac-key-print-kill-view-buffers (kill-buffer html-temp-buffer))
+      file)))
+
 
 
 ;; Text-to-Speech functions
@@ -257,6 +360,7 @@ When Mac Key mode is enabled, mac-style key bindings are provided."
       (kill-buffer mybuffer)
       (beep))
     ))
+
 
 ;; Quick Look
 ;; inspired by https://news.mynavi.jp/article/osx-263/
