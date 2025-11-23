@@ -62,7 +62,7 @@
   ("\\.cron\\(tab\\)?\\'" . "crontab %f")
   ("\\.cu\\'"         . "nvcc %f -o %n")
   ("\\.cuf\\'"        . "nvfortran -cuda -O2 %f -o %n")
-  ("\\.ex\\'"         . "elixirc %f")
+  ("\\.ex[s]?\\'"     . "elixirc %f")
   ("\\.[Ff]\\'"       . "gfortran %f -o %n")
   ("\\.[Ff]9[05]\\'"  . "gfortran %f -o %n")
   ("\\.go\\'"         . "go run %f")
