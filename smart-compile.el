@@ -3,7 +3,7 @@
 ;; Copyright (C) 1998-2025  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@gmail.com>
-;; Version: 20251123
+;; Version: 20251229
 ;; Keywords: tools, unix
 ;; Created: 1998-12-27
 ;; Compatibility: Emacs 24 or later
@@ -60,7 +60,7 @@
 ;;  ("\\.c\\'"          . "gcc -O2 %f -lm -o %n && %n") ;; win
   ("\\.[Cc]+[Pp]*\\'" . "g++ -O2 %f -lm -o %n")
   ("\\.cron\\(tab\\)?\\'" . "crontab %f")
-  ("\\.cu\\'"         . "nvcc %f -o %n")
+  ("\\.cu[h]?\\'"     . "nvcc %f -o %n")
   ("\\.cuf\\'"        . "nvfortran -cuda -O2 %f -o %n")
   ("\\.ex[s]?\\'"     . "elixirc %f")
   ("\\.[Ff]\\'"       . "gfortran %f -o %n")
