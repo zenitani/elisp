@@ -1,6 +1,6 @@
 ;;; mac-key-mode.el --- mac-style key bindings for Emacs  -*- lexical-binding: nil -*-
 
-;; Copyright (C) 2004-2010, 2025  Seiji Zenitani
+;; Copyright (C) 2004-2010, 2025, 2026  Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@gmail.com>
 ;; Keywords: tools, mac
@@ -182,7 +182,7 @@ When Mac Key mode is enabled, mac-style key bindings are provided."
                        (process-buffer mac-key-ql-process))))
     (if (buffer-live-p mybuffer)
         (kill-buffer mybuffer))
-    (kill-this-buffer)
+    (kill-current-buffer)
     ))
 
 
